@@ -22,6 +22,7 @@ def generate_ai_resume(data):
         - Skills as bullet points
         - Experience as strong action statements
         - Keep it concise and professional
+        - Make it ATS friendly
         """
 
         response = client.chat.completions.create(
