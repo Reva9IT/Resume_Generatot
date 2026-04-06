@@ -7,50 +7,36 @@ from reportlab.lib.styles import getSampleStyleSheet
 def create_docx(data):
     doc = Document()
 
-    # Name
-    doc.add_heading(data.get("name", ""), 0)
+    doc.add_heading(data["name"], 0)
+    doc.add_paragraph(f"{data['email']} | {data['phone']}")
+    doc.add_paragraph(f"{data['linkedin']} | {data['github']}")
 
-    # Contact
-    contact = f"{data.get('email','')} | {data.get('phone','')}"
-    if data.get("links"):
-        contact += f" | {data.get('links')}"
-    doc.add_paragraph(contact)
+    doc.add_heading("Summary", 1)
+    doc.add_paragraph(data["summary"])
 
-    # Summary
-    doc.add_heading("Summary", level=1)
-    doc.add_paragraph(data.get("summary", ""))
+    doc.add_heading("Skills", 1)
+    for s in data["skills"].split(","):
+        if s.strip():
+            doc.add_paragraph(s.strip(), style="List Bullet")
 
-    # Skills
-    doc.add_heading("Skills", level=1)
-    for skill in data.get("skills", "").split(","):
-        if skill.strip():
-            doc.add_paragraph(skill.strip(), style="List Bullet")
+    doc.add_heading("Experience", 1)
+    for e in data["experience"].split("\n"):
+        if e.strip():
+            doc.add_paragraph(e.strip(), style="List Bullet")
 
-    # Education
-    doc.add_heading("Education", level=1)
-    doc.add_paragraph(data.get("education", ""))
+    doc.add_heading("Projects", 1)
+    for p in data["projects"].split("\n"):
+        if p.strip():
+            doc.add_paragraph(p.strip(), style="List Bullet")
 
-    # Experience
-    doc.add_heading("Experience", level=1)
-    for line in data.get("experience", "").split("\n"):
-        if line.strip():
-            doc.add_paragraph(line.strip(), style="List Bullet")
+    doc.add_heading("Education", 1)
+    doc.add_paragraph(data["education"])
 
-    # Projects
-    doc.add_heading("Projects", level=1)
-    for project in data.get("projects", "").split(","):
-        if project.strip():
-            doc.add_paragraph(project.strip(), style="List Bullet")
+    doc.add_heading("Achievements", 1)
+    doc.add_paragraph(data["achievements"])
 
-    # Achievements
-    doc.add_heading("Achievements", level=1)
-    for ach in data.get("achievements", "").split(","):
-        if ach.strip():
-            doc.add_paragraph(ach.strip(), style="List Bullet")
-
-    file_path = "resume.docx"
-    doc.save(file_path)
-    return file_path
+    doc.save("resume.docx")
+    return "resume.docx"
 
 
 # ---------- PDF ----------
@@ -59,53 +45,18 @@ def create_pdf(data):
     styles = getSampleStyleSheet()
     elements = []
 
-    # Name
-    elements.append(Paragraph(f"<b>{data.get('name','')}</b>", styles['Title']))
+    elements.append(Paragraph(f"<b>{data['name']}</b>", styles["Title"]))
     elements.append(Spacer(1, 10))
 
-    # Contact
-    contact = f"{data.get('email','')} | {data.get('phone','')}"
-    if data.get("links"):
-        contact += f" | {data.get('links')}"
-    elements.append(Paragraph(contact, styles['Normal']))
-    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(data["summary"], styles["Normal"]))
+    elements.append(Spacer(1, 10))
 
-    # Summary
-    elements.append(Paragraph("<b>Summary</b>", styles['Heading2']))
-    elements.append(Paragraph(data.get("summary",""), styles['Normal']))
-    elements.append(Spacer(1, 12))
-
-    # Skills
-    elements.append(Paragraph("<b>Skills</b>", styles['Heading2']))
-    for skill in data.get("skills", "").split(","):
-        if skill.strip():
-            elements.append(Paragraph(f"• {skill.strip()}", styles['Normal']))
-    elements.append(Spacer(1, 12))
-
-    # Education
-    elements.append(Paragraph("<b>Education</b>", styles['Heading2']))
-    elements.append(Paragraph(data.get("education",""), styles['Normal']))
-    elements.append(Spacer(1, 12))
-
-    # Experience
-    elements.append(Paragraph("<b>Experience</b>", styles['Heading2']))
-    for line in data.get("experience","").split("\n"):
-        if line.strip():
-            elements.append(Paragraph(f"• {line.strip()}", styles['Normal']))
-    elements.append(Spacer(1, 12))
-
-    # Projects
-    elements.append(Paragraph("<b>Projects</b>", styles['Heading2']))
-    for p in data.get("projects","").split(","):
-        if p.strip():
-            elements.append(Paragraph(f"• {p.strip()}", styles['Normal']))
-    elements.append(Spacer(1, 12))
-
-    # Achievements
-    elements.append(Paragraph("<b>Achievements</b>", styles['Heading2']))
-    for a in data.get("achievements","").split(","):
-        if a.strip():
-            elements.append(Paragraph(f"• {a.strip()}", styles['Normal']))
+    for section in ["skills", "experience", "projects"]:
+        elements.append(Paragraph(f"<b>{section.title()}</b>", styles["Heading2"]))
+        for item in data[section].split("\n"):
+            if item.strip():
+                elements.append(Paragraph(f"• {item}", styles["Normal"]))
+        elements.append(Spacer(1, 10))
 
     doc.build(elements)
     return "resume.pdf"
@@ -113,57 +64,61 @@ def create_pdf(data):
 
 # ---------- PORTFOLIO ----------
 def create_portfolio(data):
-    html_content = f"""
+    html = f"""
     <html>
     <head>
-        <title>{data.get("name","")} Portfolio</title>
-        <style>
-            body {{
-                font-family: Arial;
-                background-color: #1e2d24;
-                color: #f5f5dc;
-                padding: 40px;
-            }}
-            h1, h2 {{
-                color: #d6e5b1;
-            }}
-        </style>
+    <style>
+    body {{
+        font-family: Arial;
+        background: #121212;
+        color: white;
+        margin: 0;
+    }}
+    .hero {{
+        text-align:center;
+        padding:50px;
+        background:#1e2d24;
+    }}
+    .section {{
+        padding:40px;
+    }}
+    .card {{
+        background:#1e1e1e;
+        padding:15px;
+        margin:10px;
+        border-radius:10px;
+    }}
+    </style>
     </head>
+
     <body>
 
-    <h1>{data.get("name","")}</h1>
-    <p>{data.get("email","")} | {data.get("phone","")}</p>
-    <p>{data.get("links","")}</p>
+    <div class="hero">
+        <h1>{data['name']}</h1>
+        <h2>{data['title']}</h2>
+        <p>{data['email']} | {data['phone']}</p>
+    </div>
 
-    <h2>Summary</h2>
-    <p>{data.get("summary","")}</p>
+    <div class="section">
+        <h2>About</h2>
+        <p>{data['summary']}</p>
+    </div>
 
-    <h2>Skills</h2>
-    <ul>
-        {''.join([f"<li>{s.strip()}</li>" for s in data.get("skills","").split(",") if s.strip()])}
-    </ul>
+    <div class="section">
+        <h2>Projects</h2>
+        {"".join([f"<div class='card'>{p}</div>" for p in data['projects'].split("\\n") if p.strip()])}
+    </div>
 
-    <h2>Projects</h2>
-    <ul>
-        {''.join([f"<li>{p.strip()}</li>" for p in data.get("projects","").split(",") if p.strip()])}
-    </ul>
-
-    <h2>Experience</h2>
-    <ul>
-        {''.join([f"<li>{e.strip()}</li>" for e in data.get("experience","").split("\\n") if e.strip()])}
-    </ul>
-
-    <h2>Achievements</h2>
-    <ul>
-        {''.join([f"<li>{a.strip()}</li>" for a in data.get("achievements","").split(",") if a.strip()])}
-    </ul>
+    <div class="section">
+        <h2>Experience</h2>
+        {"".join([f"<div class='card'>{e}</div>" for e in data['experience'].split("\\n") if e.strip()])}
+    </div>
 
     </body>
     </html>
     """
 
-    file_path = "portfolio.html"
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    with open("portfolio.html", "w") as f:
+        f.write(html)
 
-    return file_path
+    return "portfolio.html"
