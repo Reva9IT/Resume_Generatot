@@ -2,6 +2,10 @@ import streamlit as st
 import google.generativeai as genai
 from resume_generator import create_docx, create_pdf, create_portfolio
 
+if st.button("Show Available Models"):
+    models = [m.name for m in genai.list_models()]
+    st.write(models)
+
 # ---------- API CONFIG ----------
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
