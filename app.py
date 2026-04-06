@@ -41,7 +41,7 @@ def generate_summary():
     Make it ATS-friendly and impactful.
     """
 
-    model = genai.GenerativeModel("gemini-1.5-flash-latest")
+    model = genai.GenerativeModel("models/gemini-1.5-flash")
     response = model.generate_content(prompt)
 
     return response.text
