@@ -1,37 +1,66 @@
 import streamlit as st
+import google.generativeai as genai
 from resume_generator import create_docx, create_pdf, create_portfolio
+
+# ---------- API CONFIG ----------
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 st.set_page_config(page_title="AI Resume & Portfolio Builder", layout="centered")
 
-st.title("📄 AI Resume & Portfolio Builder")
+st.title("🚀 AI Resume & Portfolio Builder")
 
 # ---------- INPUTS ----------
 name = st.text_input("Full Name")
+title = st.text_input("Professional Title")
+
 email = st.text_input("Email")
-phone = st.text_input("Phone Number")
-links = st.text_input("Links (GitHub / LinkedIn)")
+phone = st.text_input("Phone")
+
+linkedin = st.text_input("LinkedIn")
+github = st.text_input("GitHub")
+website = st.text_input("Website")
 
 skills = st.text_area("Skills (comma separated)")
 education = st.text_area("Education")
-experience = st.text_area("Experience (each point on new line)")
 
-projects = st.text_area("Projects (comma separated)")
-achievements = st.text_area("Achievements (comma separated)")
-summary = st.text_area("Summary (optional)")
+experience = st.text_area("Experience (Role - Company - Description)")
+projects = st.text_area("Projects (Name - Description)")
+achievements = st.text_area("Achievements")
+
+# ---------- LLM ----------
+def generate_summary():
+    prompt = f"""
+    Create a strong professional resume summary.
+
+    Name: {name}
+    Role: {title}
+    Skills: {skills}
+    Experience: {experience}
+    Projects: {projects}
+
+    Make it ATS-friendly and impactful.
+    """
+
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content(prompt)
+    return response.text
+
 
 # ---------- BUTTON ----------
 if st.button("Generate"):
-    if not name:
-        st.error("Name is required")
+    if not name or not skills:
+        st.error("Fill required fields")
     else:
-        if not summary:
-            summary = f"Motivated individual skilled in {skills}, with experience in {projects}."
+        summary = generate_summary()
 
         data = {
             "name": name,
+            "title": title,
             "email": email,
             "phone": phone,
-            "links": links,
+            "linkedin": linkedin,
+            "github": github,
+            "website": website,
             "skills": skills,
             "education": education,
             "experience": experience,
@@ -40,21 +69,18 @@ if st.button("Generate"):
             "summary": summary,
         }
 
-        try:
-            docx_file = create_docx(data)
-            pdf_file = create_pdf(data)
-            html_file = create_portfolio(data)
+        docx = create_docx(data)
+        pdf = create_pdf(data)
+        html = create_portfolio(data)
 
-            st.success("Generated Successfully!")
+        st.subheader("Generated Summary")
+        st.write(summary)
 
-            with open(docx_file, "rb") as f:
-                st.download_button("Download Resume (DOCX)", f, file_name="resume.docx")
+        with open(docx, "rb") as f:
+            st.download_button("Download Resume DOCX", f)
 
-            with open(pdf_file, "rb") as f:
-                st.download_button("Download Resume (PDF)", f, file_name="resume.pdf")
+        with open(pdf, "rb") as f:
+            st.download_button("Download Resume PDF", f)
 
-            with open(html_file, "rb") as f:
-                st.download_button("Download Portfolio (HTML)", f, file_name="portfolio.html")
-
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
+        with open(html, "rb") as f:
+            st.download_button("Download Portfolio Website", f)
