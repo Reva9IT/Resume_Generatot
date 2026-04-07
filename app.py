@@ -25,7 +25,7 @@ projects = st.text_area("Projects (Name - Description, new line)")
 achievements = st.text_area("Achievements")
 
 # ---------- HUGGING FACE API ----------
-API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
 
 headers = {
     "Authorization": f"Bearer {st.secrets['HUGGINGFACE_API_KEY']}"
