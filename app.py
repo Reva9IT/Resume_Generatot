@@ -67,11 +67,11 @@ if st.button("Generate Resume & Portfolio"):
         st.subheader("Generated Summary")
         st.write(summary)
 
-        with open(docx, "rb") as f:
+        with open("resume.docx", "rb") as f:
             st.download_button("Download Resume (DOCX)", f)
 
-        with open(pdf, "rb") as f:
+        with open("resume.pdf", "rb") as f:
             st.download_button("Download Resume (PDF)", f)
 
-        with open(html, "rb") as f:
+        with open("portfolio.html", "rb") as f:
             st.download_button("Download Portfolio Website", f)
