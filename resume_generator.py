@@ -8,7 +8,6 @@ def create_docx(data):
     doc = Document()
 
     doc.add_heading(data["name"], 0)
-
     doc.add_paragraph(f"{data['email']} | {data['phone']}")
     doc.add_paragraph(f"{data['linkedin']} | {data['github']}")
 
@@ -37,7 +36,6 @@ def create_docx(data):
     doc.add_paragraph(data["achievements"])
 
     doc.save("resume.docx")
-    return "resume.docx"
 
 
 # ---------- PDF ----------
@@ -60,7 +58,6 @@ def create_pdf(data):
         elements.append(Spacer(1, 10))
 
     doc.build(elements)
-    return "resume.pdf"
 
 
 # ---------- PORTFOLIO ----------
@@ -128,5 +125,3 @@ h2 {{
 
     with open("portfolio.html", "w", encoding="utf-8") as f:
         f.write(html)
-
-    return "portfolio.html"
