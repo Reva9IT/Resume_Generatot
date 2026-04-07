@@ -30,7 +30,6 @@ API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Inst
 headers = {
     "Authorization": f"Bearer {st.secrets['HUGGINGFACE_API_KEY']}"
 }
-
 def generate_summary():
     prompt = f"""
 Write a strong professional resume summary.
@@ -53,13 +52,22 @@ Make it ATS-friendly and impactful.
 
         output = response.json()
 
+        # Debug print (optional)
+        print(output)
+
+        # Case 1: correct response
         if isinstance(output, list) and "generated_text" in output[0]:
             return output[0]["generated_text"]
 
-        return "Summary generation failed. Using fallback."
+        # Case 2: model loading / error
+        if isinstance(output, dict) and "error" in output:
+            return f"AI unavailable: {output['error']}"
 
-    except:
+        # fallback
         return f"Motivated individual skilled in {skills}, seeking a role as {title}."
+
+    except Exception as e:
+        return f"Fallback summary: Skilled in {skills}, aiming for {title} role."
 
 
 # ---------- BUTTON ----------
