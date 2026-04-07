@@ -8,7 +8,9 @@ def create_docx(data):
     doc = Document()
 
     doc.add_heading(data["name"], 0)
-    doc.add_paragraph(f"{data['email']} | {data['phone']}")
+
+    contact = f"{data['email']} | {data['phone']}"
+    doc.add_paragraph(contact)
     doc.add_paragraph(f"{data['linkedin']} | {data['github']}")
 
     doc.add_heading("Summary", 1)
@@ -49,7 +51,7 @@ def create_pdf(data):
     elements.append(Spacer(1, 10))
 
     elements.append(Paragraph(data["summary"], styles["Normal"]))
-    elements.append(Spacer(1, 10))
+    elements.append(Spacer(1, 12))
 
     for section in ["skills", "experience", "projects"]:
         elements.append(Paragraph(f"<b>{section.title()}</b>", styles["Heading2"]))
@@ -62,34 +64,42 @@ def create_pdf(data):
     return "resume.pdf"
 
 
-# ---------- PORTFOLIO ----------
+# ---------- PORTFOLIO (PROPER WEBSITE STYLE) ----------
 def create_portfolio(data):
     html = f"""
 <html>
 <head>
 <style>
 body {{
-    font-family: Arial;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
-    background: #121212;
-    color: white;
+    background: #0f172a;
+    color: #e2e8f0;
 }}
+
 .hero {{
     text-align: center;
-    padding: 60px;
-    background: #1e2d24;
+    padding: 80px;
+    background: linear-gradient(135deg, #1e293b, #334155);
 }}
+
+.hero h1 {{
+    font-size: 42px;
+}}
+
 .section {{
-    padding: 40px;
+    padding: 50px 15%;
 }}
+
 .card {{
-    background: #1e1e1e;
+    background: #1e293b;
     padding: 20px;
     margin: 15px 0;
     border-radius: 10px;
 }}
-h1, h2 {{
-    color: #d6e5b1;
+
+h2 {{
+    color: #38bdf8;
 }}
 </style>
 </head>
@@ -98,8 +108,33 @@ h1, h2 {{
 
 <div class="hero">
     <h1>{data['name']}</h1>
-    <h2>{data['title']}</h2>
+    <h3>{data['title']}</h3>
     <p>{data['email']} | {data['phone']}</p>
+</div>
+
+<div class="section">
+    <h2>About</h2>
+    <p>{data['summary']}</p>
+</div>
+
+<div class="section">
+    <h2>Projects</h2>
+    {"".join([f"<div class='card'>{p}</div>" for p in data['projects'].split("\\n") if p.strip()])}
+</div>
+
+<div class="section">
+    <h2>Experience</h2>
+    {"".join([f"<div class='card'>{e}</div>" for e in data['experience'].split("\\n") if e.strip()])}
+</div>
+
+</body>
+</html>
+"""
+
+    with open("portfolio.html", "w", encoding="utf-8") as f:
+        f.write(html)
+
+    return "portfolio.html"    <p>{data['email']} | {data['phone']}</p>
     <p>{data['linkedin']} | {data['github']}</p>
 </div>
 
