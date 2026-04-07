@@ -1,10 +1,9 @@
 import streamlit as st
-import requests
 from resume_generator import create_docx, create_pdf, create_portfolio
 
-st.set_page_config(page_title="AI Resume & Portfolio Builder", layout="centered")
+st.set_page_config(page_title="Resume & Portfolio Builder", layout="centered")
 
-st.title("🚀 AI Resume & Portfolio Builder")
+st.title("🚀 Resume & Portfolio Builder")
 
 # ---------- INPUTS ----------
 name = st.text_input("Full Name")
@@ -24,45 +23,16 @@ experience = st.text_area("Experience (Role - Company - Description, new line)")
 projects = st.text_area("Projects (Name - Description, new line)")
 achievements = st.text_area("Achievements")
 
-# ---------- HUGGING FACE API ----------
-API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
-
-headers = {
-    "Authorization": f"Bearer {st.secrets['HUGGINGFACE_API_KEY']}"
-}
+# ---------- SMART SUMMARY ----------
 def generate_summary():
-    prompt = f"""
-Write a professional resume summary.
+    skills_list = [s.strip() for s in skills.split(",") if s.strip()]
+    top_skills = ", ".join(skills_list[:4])
 
-Name: {name}
-Role: {title}
-Skills: {skills}
-Experience: {experience}
-Projects: {projects}
+    return f"""
+{title} with strong expertise in {top_skills}.
+Experienced in building projects such as {projects.split(chr(10))[0] if projects else "various applications"}.
+Passionate about solving real-world problems and delivering scalable solutions.
 """
-
-    try:
-        response = requests.post(
-            API_URL,
-            headers=headers,
-            json={"inputs": prompt}
-        )
-
-        output = response.json()
-
-        # SUCCESS
-        if isinstance(output, list) and "generated_text" in output[0]:
-            return output[0]["generated_text"]
-
-        # MODEL LOADING / ERROR
-        if isinstance(output, dict) and "error" in output:
-            return f"(AI busy, using fallback)\n\nMotivated individual skilled in {skills}, seeking a role as {title}."
-
-        # FALLBACK
-        return f"Motivated individual skilled in {skills}, seeking a role as {title}."
-
-    except:
-        return f"Motivated individual skilled in {skills}, seeking a role as {title}."
 
 
 # ---------- BUTTON ----------
@@ -100,6 +70,9 @@ if st.button("Generate Resume & Portfolio"):
 
         with open(pdf, "rb") as f:
             st.download_button("Download Resume (PDF)", f)
+
+        with open(html, "rb") as f:
+            st.download_button("Download Portfolio Website", f)            st.download_button("Download Resume (PDF)", f)
 
         with open(html, "rb") as f:
             st.download_button("Download Portfolio Website", f)
