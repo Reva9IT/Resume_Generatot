@@ -9,8 +9,7 @@ def create_docx(data):
 
     doc.add_heading(data["name"], 0)
 
-    contact = f"{data['email']} | {data['phone']}"
-    doc.add_paragraph(contact)
+    doc.add_paragraph(f"{data['email']} | {data['phone']}")
     doc.add_paragraph(f"{data['linkedin']} | {data['github']}")
 
     doc.add_heading("Summary", 1)
@@ -64,7 +63,7 @@ def create_pdf(data):
     return "resume.pdf"
 
 
-# ---------- PORTFOLIO (PROPER WEBSITE STYLE) ----------
+# ---------- PORTFOLIO ----------
 def create_portfolio(data):
     html = f"""
 <html>
@@ -81,10 +80,6 @@ body {{
     text-align: center;
     padding: 80px;
     background: linear-gradient(135deg, #1e293b, #334155);
-}}
-
-.hero h1 {{
-    font-size: 42px;
 }}
 
 .section {{
@@ -110,32 +105,6 @@ h2 {{
     <h1>{data['name']}</h1>
     <h3>{data['title']}</h3>
     <p>{data['email']} | {data['phone']}</p>
-</div>
-
-<div class="section">
-    <h2>About</h2>
-    <p>{data['summary']}</p>
-</div>
-
-<div class="section">
-    <h2>Projects</h2>
-    {"".join([f"<div class='card'>{p}</div>" for p in data['projects'].split("\\n") if p.strip()])}
-</div>
-
-<div class="section">
-    <h2>Experience</h2>
-    {"".join([f"<div class='card'>{e}</div>" for e in data['experience'].split("\\n") if e.strip()])}
-</div>
-
-</body>
-</html>
-"""
-
-    with open("portfolio.html", "w", encoding="utf-8") as f:
-        f.write(html)
-
-    return "portfolio.html"    <p>{data['email']} | {data['phone']}</p>
-    <p>{data['linkedin']} | {data['github']}</p>
 </div>
 
 <div class="section">
