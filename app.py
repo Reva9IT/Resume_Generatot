@@ -32,15 +32,13 @@ headers = {
 }
 def generate_summary():
     prompt = f"""
-Write a strong professional resume summary.
+Write a professional resume summary.
 
 Name: {name}
 Role: {title}
 Skills: {skills}
 Experience: {experience}
 Projects: {projects}
-
-Make it ATS-friendly and impactful.
 """
 
     try:
@@ -52,22 +50,19 @@ Make it ATS-friendly and impactful.
 
         output = response.json()
 
-        # Debug print (optional)
-        print(output)
-
-        # Case 1: correct response
+        # SUCCESS
         if isinstance(output, list) and "generated_text" in output[0]:
             return output[0]["generated_text"]
 
-        # Case 2: model loading / error
+        # MODEL LOADING / ERROR
         if isinstance(output, dict) and "error" in output:
-            return f"AI unavailable: {output['error']}"
+            return f"(AI busy, using fallback)\n\nMotivated individual skilled in {skills}, seeking a role as {title}."
 
-        # fallback
+        # FALLBACK
         return f"Motivated individual skilled in {skills}, seeking a role as {title}."
 
-    except Exception as e:
-        return f"Fallback summary: Skilled in {skills}, aiming for {title} role."
+    except:
+        return f"Motivated individual skilled in {skills}, seeking a role as {title}."
 
 
 # ---------- BUTTON ----------
