@@ -1,13 +1,3 @@
-import os
-
-# 🔥 FORCE DELETE OLD JUNK FILES
-for file in os.listdir():
-    if file.endswith(".bin"):
-        try:
-            os.remove(file)
-        except:
-            pass
-
 import streamlit as st
 from resume_generator import create_docx, create_pdf, create_portfolio
 
@@ -33,7 +23,7 @@ experience = st.text_area("Experience (Role - Company - Description, new line)")
 projects = st.text_area("Projects (Name - Description, new line)")
 achievements = st.text_area("Achievements")
 
-# ---------- SUMMARY (NO AI, SMART TEMPLATE) ----------
+# ---------- SUMMARY ----------
 def generate_summary():
     skills_list = [s.strip() for s in skills.split(",") if s.strip()]
     top_skills = ", ".join(skills_list[:4])
@@ -45,7 +35,6 @@ def generate_summary():
     return f"""{title} with strong expertise in {top_skills}.
 Experienced in building projects such as {first_project}.
 Passionate about solving real-world problems and delivering scalable solutions."""
-
 
 # ---------- BUTTON ----------
 if st.button("Generate Resume & Portfolio"):
@@ -70,18 +59,35 @@ if st.button("Generate Resume & Portfolio"):
             "summary": summary,
         }
 
-        docx = create_docx(data)
-        pdf = create_pdf(data)
-        html = create_portfolio(data)
+        # Generate files
+        create_docx(data)
+        create_pdf(data)
+        create_portfolio(data)
 
         st.subheader("Generated Summary")
         st.write(summary)
 
+        # ---------- DOWNLOAD BUTTONS (FIXED MIME ISSUE) ----------
         with open("resume.docx", "rb") as f:
-            st.download_button("Download Resume (DOCX)", f)
+            st.download_button(
+                label="Download Resume (DOCX)",
+                data=f,
+                file_name="resume.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
 
         with open("resume.pdf", "rb") as f:
-            st.download_button("Download Resume (PDF)", f)
+            st.download_button(
+                label="Download Resume (PDF)",
+                data=f,
+                file_name="resume.pdf",
+                mime="application/pdf"
+            )
 
         with open("portfolio.html", "rb") as f:
-            st.download_button("Download Portfolio Website", f)
+            st.download_button(
+                label="Download Portfolio Website",
+                data=f,
+                file_name="portfolio.html",
+                mime="text/html"
+            )
