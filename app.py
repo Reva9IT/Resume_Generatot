@@ -23,16 +23,18 @@ experience = st.text_area("Experience (Role - Company - Description, new line)")
 projects = st.text_area("Projects (Name - Description, new line)")
 achievements = st.text_area("Achievements")
 
-# ---------- SMART SUMMARY ----------
+# ---------- SUMMARY (NO AI, SMART TEMPLATE) ----------
 def generate_summary():
     skills_list = [s.strip() for s in skills.split(",") if s.strip()]
     top_skills = ", ".join(skills_list[:4])
 
-    return f"""
-{title} with strong expertise in {top_skills}.
-Experienced in building projects such as {projects.split(chr(10))[0] if projects else "various applications"}.
-Passionate about solving real-world problems and delivering scalable solutions.
-"""
+    first_project = ""
+    if projects:
+        first_project = projects.split("\n")[0]
+
+    return f"""{title} with strong expertise in {top_skills}.
+Experienced in building projects such as {first_project}.
+Passionate about solving real-world problems and delivering scalable solutions."""
 
 
 # ---------- BUTTON ----------
@@ -70,9 +72,6 @@ if st.button("Generate Resume & Portfolio"):
 
         with open(pdf, "rb") as f:
             st.download_button("Download Resume (PDF)", f)
-
-        with open(html, "rb") as f:
-            st.download_button("Download Portfolio Website", f)            st.download_button("Download Resume (PDF)", f)
 
         with open(html, "rb") as f:
             st.download_button("Download Portfolio Website", f)
