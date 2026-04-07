@@ -62,7 +62,7 @@ def create_pdf(data):
     return "resume.pdf"
 
 
-# ---------- PORTFOLIO ----------
+# ---------- PORTFOLIO WEBSITE ----------
 def create_portfolio(data):
     html = f"""
     <html>
@@ -70,23 +70,26 @@ def create_portfolio(data):
     <style>
     body {{
         font-family: Arial;
+        margin: 0;
         background: #121212;
         color: white;
-        margin: 0;
     }}
     .hero {{
-        text-align:center;
-        padding:50px;
-        background:#1e2d24;
+        text-align: center;
+        padding: 60px;
+        background: #1e2d24;
     }}
     .section {{
-        padding:40px;
+        padding: 40px;
     }}
     .card {{
-        background:#1e1e1e;
-        padding:15px;
-        margin:10px;
-        border-radius:10px;
+        background: #1e1e1e;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 10px;
+    }}
+    h1, h2 {{
+        color: #d6e5b1;
     }}
     </style>
     </head>
@@ -97,9 +100,32 @@ def create_portfolio(data):
         <h1>{data['name']}</h1>
         <h2>{data['title']}</h2>
         <p>{data['email']} | {data['phone']}</p>
+        <p>{data['linkedin']} | {data['github']}</p>
     </div>
 
     <div class="section">
+        <h2>About</h2>
+        <p>{data['summary']}</p>
+    </div>
+
+    <div class="section">
+        <h2>Projects</h2>
+        {"".join([f"<div class='card'>{p}</div>" for p in data['projects'].split("\\n") if p.strip()])}
+    </div>
+
+    <div class="section">
+        <h2>Experience</h2>
+        {"".join([f"<div class='card'>{e}</div>" for e in data['experience'].split("\\n") if e.strip()])}
+    </div>
+
+    </body>
+    </html>
+    """
+
+    with open("portfolio.html", "w", encoding="utf-8") as f:
+        f.write(html)
+
+    return "portfolio.html"    <div class="section">
         <h2>About</h2>
         <p>{data['summary']}</p>
     </div>
