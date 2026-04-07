@@ -1,3 +1,13 @@
+import os
+
+# 🔥 FORCE DELETE OLD JUNK FILES
+for file in os.listdir():
+    if file.endswith(".bin"):
+        try:
+            os.remove(file)
+        except:
+            pass
+
 import streamlit as st
 from resume_generator import create_docx, create_pdf, create_portfolio
 
