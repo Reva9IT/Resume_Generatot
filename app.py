@@ -20,11 +20,11 @@ website = st.text_input("Website")
 skills = st.text_area("Skills (comma separated)")
 education = st.text_area("Education")
 
-experience = st.text_area("Experience (Role - Company - Description)")
-projects = st.text_area("Projects (Name - Description)")
+experience = st.text_area("Experience (Role - Company - Description, new line)")
+projects = st.text_area("Projects (Name - Description, new line)")
 achievements = st.text_area("Achievements")
 
-# ---------- HUGGING FACE ----------
+# ---------- HUGGING FACE API ----------
 API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
 
 headers = {
@@ -33,7 +33,7 @@ headers = {
 
 def generate_summary():
     prompt = f"""
-    Write a professional resume summary.
+    Write a strong professional resume summary.
 
     Name: {name}
     Role: {title}
@@ -41,7 +41,7 @@ def generate_summary():
     Experience: {experience}
     Projects: {projects}
 
-    Keep it concise and impactful.
+    Keep it concise and ATS-friendly.
     """
 
     try:
@@ -60,7 +60,7 @@ def generate_summary():
 
 
 # ---------- BUTTON ----------
-if st.button("Generate"):
+if st.button("Generate Resume & Portfolio"):
     if not name or not skills:
         st.error("Fill required fields")
     else:
@@ -90,10 +90,10 @@ if st.button("Generate"):
         st.write(summary)
 
         with open(docx, "rb") as f:
-            st.download_button("Download Resume DOCX", f)
+            st.download_button("Download Resume (DOCX)", f)
 
         with open(pdf, "rb") as f:
-            st.download_button("Download Resume PDF", f)
+            st.download_button("Download Resume (PDF)", f)
 
         with open(html, "rb") as f:
             st.download_button("Download Portfolio Website", f)
