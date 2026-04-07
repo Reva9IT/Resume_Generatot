@@ -33,16 +33,16 @@ headers = {
 
 def generate_summary():
     prompt = f"""
-    Write a strong professional resume summary.
+Write a strong professional resume summary.
 
-    Name: {name}
-    Role: {title}
-    Skills: {skills}
-    Experience: {experience}
-    Projects: {projects}
+Name: {name}
+Role: {title}
+Skills: {skills}
+Experience: {experience}
+Projects: {projects}
 
-    Keep it concise and ATS-friendly.
-    """
+Make it ATS-friendly and impactful.
+"""
 
     try:
         response = requests.post(
@@ -53,7 +53,10 @@ def generate_summary():
 
         output = response.json()
 
-        return output[0]["generated_text"]
+        if isinstance(output, list) and "generated_text" in output[0]:
+            return output[0]["generated_text"]
+
+        return "Summary generation failed. Using fallback."
 
     except:
         return f"Motivated individual skilled in {skills}, seeking a role as {title}."
