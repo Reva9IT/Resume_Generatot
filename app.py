@@ -1,13 +1,6 @@
 import streamlit as st
-import google.generativeai as genai
+import requests
 from resume_generator import create_docx, create_pdf, create_portfolio
-
-if st.button("Show Available Models"):
-    models = [m.name for m in genai.list_models()]
-    st.write(models)
-
-# ---------- API CONFIG ----------
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 st.set_page_config(page_title="AI Resume & Portfolio Builder", layout="centered")
 
@@ -31,10 +24,16 @@ experience = st.text_area("Experience (Role - Company - Description)")
 projects = st.text_area("Projects (Name - Description)")
 achievements = st.text_area("Achievements")
 
-# ---------- LLM ----------
+# ---------- HUGGING FACE ----------
+API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+
+headers = {
+    "Authorization": f"Bearer {st.secrets['HUGGINGFACE_API_KEY']}"
+}
+
 def generate_summary():
     prompt = f"""
-    Create a strong professional resume summary.
+    Write a professional resume summary.
 
     Name: {name}
     Role: {title}
@@ -42,13 +41,22 @@ def generate_summary():
     Experience: {experience}
     Projects: {projects}
 
-    Make it ATS-friendly and impactful.
+    Keep it concise and impactful.
     """
 
-    model = genai.GenerativeModel("models/gemini-2.5-flash")
-    response = model.generate_content(prompt)
+    try:
+        response = requests.post(
+            API_URL,
+            headers=headers,
+            json={"inputs": prompt}
+        )
 
-    return response.text
+        output = response.json()
+
+        return output[0]["generated_text"]
+
+    except:
+        return f"Motivated individual skilled in {skills}, seeking a role as {title}."
 
 
 # ---------- BUTTON ----------
